@@ -38,32 +38,6 @@ def create_table_bookings():
     conn = sqlite3.connect('data.db')
     cursor = conn.cursor()
     cursor.execute('''
-        -- CREATE TABLE IF NOT EXISTS "bookings" (
-            -- "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-            -- "user_id" INTEGER NOT NULL,
-            -- "train_id" INTEGER NOT NULL,
-
-            -- -- "time" mi serve per permettere la cancellazione o la modifica di un biglietto, acquistato in precedenza, fino a 2 minuti prima della partenza
-            -- "time" INTEGER NOT NULL,
-            -- -- "date": TODO
-            -- "date" TEXT NOT NULL,
-
-            -- -- Informazioni sull'acquirente
-            -- "name" TEXT NOT NULL,
-            -- "surname" TEXT NOT NULL,
-            -- "address" TEXT NOT NULL,
-            -- "city" TEXT NOT NULL,
-            -- "credit_card" TEXT NOT NULL,
-            -- "expire_date_card" TEXT NOT NULL,
-
-            -- -- Informazioni su quanti biglietti si vogliano acquistare
-            -- "number_of_tickets" INTEGER NOT NULL,
-            -- "seat" INTEGER, -- va da 0 a 30, implementare con un menu drop-down, facoltativo, operativo nel caso in cui sia un treno ad alta velocita'
-
-            -- FOREIGN KEY ("user_id") REFERENCES "users" ("id"),
-            -- FOREIGN KEY ("solution") REFERENCES "solutions" ("id")
-        -- );
-
         CREATE TABLE IF NOT EXISTS "bookings" (
             "id" INTEGER PRIMARY KEY AUTOINCREMENT,
             "user_id" INTEGER NOT NULL,

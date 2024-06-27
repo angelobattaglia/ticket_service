@@ -33,10 +33,11 @@ import trains_dao
 import bookings_dao
 
 ## Here I call these functions for the creation of the DB tables at startup time
-from table_creation import create_table_users, create_table_trains, create_table_bookings
+from table_creation import create_table_users, create_table_trains, create_table_bookings, create_table_solutions
 create_table_users()
 create_table_trains()
 create_table_bookings()
+create_table_solutions()
 
 ## Calling the method to populate the DB
 from populate import populate, populate_solutions
