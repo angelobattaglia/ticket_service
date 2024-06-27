@@ -18,6 +18,7 @@
                 <th>Departure Time</th>
                 <th>Seat</th>
                 <th>Unbook</th>
+                <th>Edit</th>
             </tr>
         </thead>
         <tbody>
@@ -34,6 +35,11 @@
                 <td>
                     <form method="POST" action="{{ url_for('delete_booking', booking_id=booking[0]) }}" style="display:inline;">
                         <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="GET" action="{{ url_for('edit_booking', booking_id=booking[0]) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-primary btn-sm">Edit</button>
                     </form>
                 </td>
             </tr>

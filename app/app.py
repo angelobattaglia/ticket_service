@@ -109,7 +109,7 @@ def delete_booking(booking_id):
     # Retrieve the booking to ensure it belongs to the current user
     booking = bookings_dao.get_booking_by_id(booking_id)
     
-    if booking and booking[0] == flask_login.current_user.id:
+    if booking and booking[1] == flask_login.current_user.id:
         bookings_dao.delete_booking(booking_id)
         flash('Booking annulled successfully.', 'success')
     else:
@@ -117,40 +117,41 @@ def delete_booking(booking_id):
     
     return redirect(url_for('profile', user_id=flask_login.current_user.id))
 
-#@app.route('/modify_booking/<int:booking_id>', methods=['POST'])
-#@flask_login.login_required
-#def delete_booking(booking_id):
-    ## Retrieve the booking to ensure it belongs to the current user
-    #booking = bookings_dao.get_booking_by_id(booking_id)
+@app.route('/modify_booking', methods=['POST'])
+@flask_login.login_required
+def modify_booking():
+    booking_id = request.form.get('booking_id')
+    # # Retrieve the booking to ensure it belongs to the current user
+    booking = bookings_dao.get_booking_by_id(booking_id)
     
-    #if not booking or booking[0] != flask_login.current_user.id:
-        #flash('Booking not found or you do not have permission to modify it.', 'danger')
-        #return redirect(url_for('profile', user_id=flask_login.current_user.id))
+    # if not booking or booking[0] != flask_login.current_user.id:
+    #     flash('Booking not found or you do not have permission to modify it.', 'danger')
+    #     return redirect(url_for('profile', user_id=flask_login.current_user.id))
     
-    ## Check if the modification is within the allowed timeframe
-    #departure_time = datetime.datetime.fromtimestamp(booking[17])  # Assuming 17 is the index for departure_time
-    #current_time = datetime.datetime.now()
-    #if (departure_time - current_time).total_seconds() < 120:
-        #flash('Modification not allowed within 2 minutes of departure.', 'danger')
-        #return redirect(url_for('profile', user_id=flask_login.current_user.id))
+    # # Check if the modification is within the allowed timeframe
+    # departure_time = datetime.datetime.fromtimestamp(float(booking[17]))  # Assuming 17 is the index for departure_time
+    # current_time = datetime.datetime.now()
+    # if (departure_time - current_time).total_seconds() < 120:
+    #     flash('Modification not allowed within 2 minutes of departure.', 'danger')
+    #     return redirect(url_for('profile', user_id=flask_login.current_user.id))
 
-    ## Get new train details from the form
-    #new_train_id = request.form.get('train_id')
+    # Get new train details from the form
+    new_train_id = request.form.get('train_id')
     
-    ## Validate the new train details
-    #if not new_train_id:
-        #flash('Invalid train selection.', 'danger')
-        #return redirect(url_for('profile', user_id=flask_login.current_user.id))
+    # Validate the new train details
+    if not new_train_id:
+        flash('Invalid train selection.', 'danger')
+        return redirect(url_for('profile', user_id=flask_login.current_user.id))
 
-    ## Perform the modification
-    #success = bookings_dao.modify_booking(booking_id, new_train_id)
+    # Perform the modification
+    success = bookings_dao.modify_booking(booking_id, new_train_id)
     
-    #if success:
-        #flash('Booking modified successfully.', 'success')
-    #else:
-        #flash('Failed to modify booking.', 'danger')
+    if success:
+        flash('Booking modified successfully.', 'success')
+    else:
+        flash('Failed to modify booking.', 'danger')
     
-    #return redirect(url_for('profile', user_id=flask_login.current_user.id))
+    return redirect(url_for('profile', user_id=flask_login.current_user.id))
 
 #########################################################
 #########################################################
@@ -214,6 +215,15 @@ def booking_form(train_id):
 
     # Passo il treno alla bagina booking_form.html
     return render_template('booking_form.html', train_id=train_id, is_high_speed=is_high_speed)
+
+# Edit Booking form with dynamic routing
+@app.route('/edit_booking/<int:booking_id>', methods=['GET'])
+@flask_login.login_required
+def edit_booking(booking_id):
+    booking = bookings_dao.get_booking_by_id(booking_id)
+    trains = trains_dao.get_trains()
+    is_high_speed = booking[19] == "High-speed"
+    return render_template('booking_edit.html', trains=trains, booking=booking, is_high_speed=is_high_speed)
 
 @app.route('/book_ticket', methods=['POST'])
 def book_ticket():
