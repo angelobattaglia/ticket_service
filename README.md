@@ -1,4 +1,4 @@
-# Train Station management software
+# Ticketing Management Software
 
 ## How to fire this up
 
