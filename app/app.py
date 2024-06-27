@@ -48,7 +48,7 @@ login_manager.init_app(app)
 
 @app.route('/')
 def home():
-    return render_template('home.html', title='Home', active_page='home')
+    return render_template('home.html', title='Home', active_page='home', search=False)
 
 #########################################################
 #########################################################
@@ -134,7 +134,7 @@ def search_trains():
         flash('No trains available for the selected route and date.', 'info')
     
     min_date = datetime.datetime.now().strftime('%Y-%m-%d')
-    return render_template('home.html', title='Search Results', departure_city=departure_city, arrival_city=arrival_city, departure_date=departure_date ,min_date=min_date, trains=results)
+    return render_template('home.html', title='Search Results', departure_city=departure_city, arrival_city=arrival_city, departure_date=departure_date ,min_date=min_date, trains=results, search=True)
 
 # Booking form with dynamic routing
 @app.route('/booking_form/<int:train_id>', methods=['GET'])

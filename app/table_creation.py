@@ -28,6 +28,8 @@ def create_table_trains():
 	        "days_of_operation"	TEXT NOT NULL,
 	        "train_type"	TEXT NOT NULL,
 	        "ticket_price"	INTEGER NOT NULL,
+
+            FOREIGN KEY (train_type) REFERENCES train_capacity(train_type),
 	        PRIMARY KEY("id" AUTOINCREMENT)
         );
     ''')
@@ -69,23 +71,35 @@ def create_table_bookings():
     conn.commit()
     conn.close
 
-# def create_table_solutions():
+def create_table_train_capacity():
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS train_capacity (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, -- 
+            train_type TEXT NOT NULL UNIQUE,
+            capacity INTEGER NOT NULL,
+            FOREIGN KEY (train_type) REFERENCES trains(id),
+            FOREIGN KEY (booking_id) REFERENCES bookings(id)
+        );
+    ''')
+    conn.commit()
+    conn.close
+
+# DDL - data definition layer
+# def create_table_seats():
     # conn = sqlite3.connect('data.db')
     # cursor = conn.cursor()
     # cursor.execute('''
-        # CREATE TABLE IF NOT EXISTS "solutions" (
-            # "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-            # "train_alphanumeric" TEXT NOT NULL,
-	        # "arrival"	NUMERIC NOT NULL,
-	        # "departure_time"	INTEGER NOT NULL,
-            # "train_type"    TEXT NOT NULL,
-            # "current_capacity"      INTEGER NOT NULL, 
-            # "max_capacity"      INTEGER NOT NULL,
-            # "ticket_price"      INTEGER NOT NULL,
-
-            # FOREIGN KEY ("train_alphanumeric") REFERENCES "trains" ("alphanumeric")
+        # CREATE TABLE IF NOT EXISTS train_seats (
+            # id INTEGER PRIMARY KEY AUTOINCREMENT,
+            # train_id INTEGER NOT NULL,
+            # seat_number INTEGER NOT NULL,
+            # is_booked BOOLEAN NOT NULL DEFAULT 0,
+            # booking_id INTEGER,
+            # FOREIGN KEY (train_id) REFERENCES trains(id),
+            # FOREIGN KEY (booking_id) REFERENCES bookings(id)
         # );
     # ''')
     # conn.commit()
     # conn.close
-

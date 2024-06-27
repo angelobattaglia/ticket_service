@@ -25,50 +25,52 @@
         <button type="submit" class="btn btn-primary w-100">Search</button>
     </form>
     <hr>
-    {% if trains %}
-    <h2>Search Results</h2>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Train Code</th>
-                <th>Departure City</th>
-                <th>Arrival City</th>
-                <th>Departure Date</th>
-                <th>Departure Time</th>
-                <th>Arrival Time</th>
-                <th>Days of Operation</th>
-                <th>Train Type</th>
-                <th>Ticket Price</th>
-                {% if current_user.is_authenticated %}
-                <th>Action</th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for train in trains %}
-            <tr>
-                <td>{{ train[1] }}</td>
-                <td>{{ train[3] }}</td>
-                <td>{{ train[4] }}</td>
-                <td>{{ train[2] }}</td>
-                <td>{{ train[5] }}</td>
-                <td>{{ train[6] }}</td>
-                <td>{{ train[7] }}</td>
-                <td>{{ train[8] }}</td>
-                <td>{{ train[9] }}</td>
-                {% if current_user.is_authenticated %}
-                <td>
-                    <form method="GET" action="{{ url_for('booking_form', train_id=train[0]) }}">
-                        <button type="submit" class="btn btn-success btn-sm">Book</button>
-                    </form>
-                </td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>No trains available for the route from {{ departure_city }} to {{ arrival_city }} on {{ departure_date }}.</p>
+    {% if search %}
+        {% if trains %}
+        <h2>Search Results</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Train Code</th>
+                    <th>Departure City</th>
+                    <th>Arrival City</th>
+                    <th>Departure Date</th>
+                    <th>Departure Time</th>
+                    <th>Arrival Time</th>
+                    <th>Days of Operation</th>
+                    <th>Train Type</th>
+                    <th>Ticket Price</th>
+                    {% if current_user.is_authenticated %}
+                    <th>Action</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for train in trains %}
+                <tr>
+                    <td>{{ train[1] }}</td>
+                    <td>{{ train[3] }}</td>
+                    <td>{{ train[4] }}</td>
+                    <td>{{ train[2] }}</td>
+                    <td>{{ train[5] }}</td>
+                    <td>{{ train[6] }}</td>
+                    <td>{{ train[7] }}</td>
+                    <td>{{ train[8] }}</td>
+                    <td>{{ train[9] }}</td>
+                    {% if current_user.is_authenticated %}
+                    <td>
+                        <form method="GET" action="{{ url_for('booking_form', train_id=train[0]) }}">
+                            <button type="submit" class="btn btn-success btn-sm">Book</button>
+                        </form>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No trains available for the route from {{ departure_city }} to {{ arrival_city }} on {{ departure_date }}.</p>
+        {% endif %}
     {% endif %}
 </div>
 {% endblock %}
