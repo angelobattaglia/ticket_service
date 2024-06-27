@@ -59,6 +59,12 @@ def home():
 #########################################################
 #########################################################
 
+# Per convertire il tempo nella visualizzazione
+def minutes_to_time(minutes):
+    hours = minutes // 60
+    mins = minutes % 60
+    return f"{hours:02}:{mins:02}"
+
 # Profile page for each user with dynamic routing
 @app.route('/profile/<int:user_id>', methods=['GET'])
 @flask_login.login_required
@@ -78,8 +84,14 @@ def profile(user_id):
     # Faccio il "retrieve" di tutti i bookings che appartengono al determinato utente
     bookings = bookings_dao.get_bookings_for_user(user_id)
 
+    formatted_bookings = []
+    for booking in bookings:
+        booking = list(booking)
+        booking[17] = minutes_to_time(booking[17])  # departure_time corrisponde all'indice 17 nella struttura dati
+        formatted_bookings.append(booking)
+
     # Passo il treno alla bagina booking_form.html
-    return render_template('profile.html', user=u, bookings=bookings, active_page='profile')
+    return render_template('profile.html', user=u, bookings=formatted_bookings, active_page='profile')
 
 #########################################################
 #########################################################
