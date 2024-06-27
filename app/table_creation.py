@@ -1,4 +1,5 @@
 import sqlite3
+# DDL - data definition layer
 
 def create_table_users():
     conn = sqlite3.connect('data.db')
@@ -79,14 +80,13 @@ def create_table_train_capacity():
             id INTEGER PRIMARY KEY AUTOINCREMENT, -- 
             train_type TEXT NOT NULL UNIQUE,
             capacity INTEGER NOT NULL,
-            FOREIGN KEY (train_type) REFERENCES trains(id),
-            FOREIGN KEY (booking_id) REFERENCES bookings(id)
+            FOREIGN KEY (train_type) REFERENCES trains(id)
+            -- FOREIGN KEY (booking_id) REFERENCES bookings(id)
         );
     ''')
     conn.commit()
     conn.close
 
-# DDL - data definition layer
 # def create_table_seats():
     # conn = sqlite3.connect('data.db')
     # cursor = conn.cursor()

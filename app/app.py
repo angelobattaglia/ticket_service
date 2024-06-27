@@ -25,14 +25,14 @@ import trains_dao
 import bookings_dao
 
 ## Here I call these functions for the creation of the DB tables at startup time
-from table_creation import create_table_users, create_table_trains, create_table_bookings#, #create_table_solutions
+from table_creation import create_table_users, create_table_trains, create_table_bookings, create_table_train_capacity
 create_table_users()
 create_table_trains()
 create_table_bookings()
-# create_table_solutions()
+create_table_train_capacity()
 
 ## Calling the method to populate the DB
-from populate import populate, populate_solutions
+from populate import populate#, populate_solutions
 populate()
 # populate_solutions()
 
@@ -77,6 +77,9 @@ def profile(user_id):
 
     # Faccio il "retrieve" di tutti i bookings che appartengono al determinato utente
     bookings = bookings_dao.get_bookings_for_user(user_id)
+    # # Prendo il treno in questione, in modo tale da passarlo a profile.html e visualizzare le informazioni
+    # # relative alla tratta
+    # train = trains_dao.get_train_by_alphanumeric(bookings[3])
 
     # Passo il treno alla bagina booking_form.html
     return render_template('profile.html', user=u, bookings=bookings, active_page='profile')
@@ -110,11 +113,32 @@ def delete_booking(booking_id):
     ## Retrieve the booking to ensure it belongs to the current user
     #booking = bookings_dao.get_booking_by_id(booking_id)
     
-    #if booking and booking[0] == flask_login.current_user.id:
-        #bookings_dao.modify_booking(booking_id)
-        #flash('Booking annulled successfully.', 'success')
+    #if not booking or booking[0] != flask_login.current_user.id:
+        #flash('Booking not found or you do not have permission to modify it.', 'danger')
+        #return redirect(url_for('profile', user_id=flask_login.current_user.id))
+    
+    ## Check if the modification is within the allowed timeframe
+    #departure_time = datetime.datetime.fromtimestamp(booking[17])  # Assuming 17 is the index for departure_time
+    #current_time = datetime.datetime.now()
+    #if (departure_time - current_time).total_seconds() < 120:
+        #flash('Modification not allowed within 2 minutes of departure.', 'danger')
+        #return redirect(url_for('profile', user_id=flask_login.current_user.id))
+
+    ## Get new train details from the form
+    #new_train_id = request.form.get('train_id')
+    
+    ## Validate the new train details
+    #if not new_train_id:
+        #flash('Invalid train selection.', 'danger')
+        #return redirect(url_for('profile', user_id=flask_login.current_user.id))
+
+    ## Perform the modification
+    #success = bookings_dao.modify_booking(booking_id, new_train_id)
+    
+    #if success:
+        #flash('Booking modified successfully.', 'success')
     #else:
-        #flash('Booking not found or you do not have permission to delete it.', 'danger')
+        #flash('Failed to modify booking.', 'danger')
     
     #return redirect(url_for('profile', user_id=flask_login.current_user.id))
 

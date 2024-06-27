@@ -35,6 +35,20 @@ def get_train_by_id(train_id):
     conn.close() 
     return train
 
+def get_train_by_alphanumeric(alphanumeric): 
+    conn = sqlite3.connect('data.db') 
+    cursor = conn.cursor() 
+ 
+    # Query parametrizzata (per prevenire SQL injections) e passo i parametri train_id come una tupla (quindi metto una virgola dopo) 
+    query = ''' 
+    SELECT * FROM trains 
+    WHERE alphanumeric = ? 
+    ''' 
+    cursor.execute(query, (alphanumeric,)) 
+    train = cursor.fetchone() 
+    conn.close() 
+    return train
+
 def get_trains():
     conn = sqlite3.connect('data.db')
     cursor = conn.cursor()
