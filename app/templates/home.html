@@ -40,6 +40,7 @@
                     <th>Days of Operation</th>
                     <th>Train Type</th>
                     <th>Ticket Price</th>
+                    <th>Availability</th>
                     {% if current_user.is_authenticated %}
                     <th>Action</th>
                     {% endif %}
@@ -57,7 +58,8 @@
                     <td>{{ train[7] }}</td>
                     <td>{{ train[8] }}</td>
                     <td>{{ train[9] }}</td>
-                    {% if current_user.is_authenticated %}
+                    <td>{{ train[11] ~ "/" ~ train[10] }}</td>
+                    {% if current_user.is_authenticated and train[11] > 0 %}
                     <td>
                         <form method="GET" action="{{ url_for('booking_form', train_id=train[0]) }}">
                             <button type="submit" class="btn btn-success btn-sm">Book</button>
