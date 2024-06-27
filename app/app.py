@@ -33,11 +33,11 @@ import trains_dao
 import bookings_dao
 
 ## Here I call these functions for the creation of the DB tables at startup time
-from table_creation import create_table_users, create_table_trains, create_table_bookings, create_table_solutions
+from table_creation import create_table_users, create_table_trains, create_table_bookings#, #create_table_solutions
 create_table_users()
 create_table_trains()
 create_table_bookings()
-create_table_solutions()
+# create_table_solutions()
 
 ## Calling the method to populate the DB
 from populate import populate, populate_solutions
@@ -58,6 +58,37 @@ login_manager.init_app(app)
 def home():
     
     return render_template('home.html', title='Home')
+
+#########################################################
+#########################################################
+#########################################################
+########## Here I make the profile page of an user ######
+#########################################################
+#########################################################
+#########################################################
+#########################################################
+
+# Profile page for each user with dynamic routing
+@app.route('/profile/<int:user_id>', methods=['GET'])
+@flask_login.login_required
+def profile(user_id):
+    # Find the user by its ID
+    user = None
+    for u in utenti_dao.get_users():
+        if u[0] == user_id:
+            user = u
+            break
+
+    # Controllo che il treno sia stato trovato, in caso negativo faccio un redirect alla home
+    if not user:
+        flash('User not found', 'danger')
+        return redirect(url_for('home'))
+
+    # Faccio il "retrieve" di tutti i bookings che appartengono al determinato utente
+    bookings = bookings_dao.get_bookings_for_user(user_id)
+
+    # Passo il treno alla bagina booking_form.html
+    return render_template('profile.html', user=u, bookings=bookings)
 
 #########################################################
 #########################################################

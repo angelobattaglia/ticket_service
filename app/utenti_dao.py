@@ -21,6 +21,21 @@ def add_user(user):
     cursor.close()
     conn.close()
 
+def get_users():
+    conn = sqlite3.connect('data.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+
+    # SQL query to select all records from the "utenti" table excluding the password and the email
+    sql = 'SELECT id, email FROM users'
+    cursor.execute(sql)
+    users = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return users
+
 def get_user_by_id(id):
     conn = sqlite3.connect('data.db')
     conn.row_factory = sqlite3.Row
