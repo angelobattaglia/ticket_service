@@ -1,15 +1,18 @@
 import sqlite3
 import datetime
 
-def insert_booking(user_id, train_id, booking_time, name, surname, address, city, credit_card, expire_date_card, number_of_tickets, seat=None):
+def insert_booking(user_id, train_id, alphanumeric, booking_time, name, surname, address, city, credit_card, expire_date_card, number_of_tickets, seat=None):
     conn = sqlite3.connect('data.db')
     cursor = conn.cursor()
+    
     cursor.execute('''
-        INSERT INTO bookings (user_id, train_id, time, date, name, surname, address, city, credit_card, expire_date_card, number_of_tickets, seat)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ''', (user_id, train_id, booking_time.timestamp(), booking_time.strftime('%Y-%m-%d'), name, surname, address, city, credit_card, expire_date_card, number_of_tickets, seat))
+        INSERT INTO bookings (user_id, train_id, alphanumeric, time, date, name, surname, address, city, credit_card, expire_date_card, number_of_tickets, seat)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (user_id, train_id, alphanumeric, booking_time.timestamp(), booking_time.strftime('%Y-%m-%d'), name, surname, address, city, credit_card, expire_date_card, number_of_tickets, seat))
+    
     conn.commit()
     conn.close()
+
 
 '''
     The following method "get_bookings_for_user()" receives "user_id" as an input and retrieves all the bookings in the "bookings" table (from data.db)
@@ -28,3 +31,65 @@ def get_bookings_for_user(user_id):
     train = cursor.fetchall()
     conn.close()
     return train
+
+'''
+    I due metodi seguenti servono per prendere dal db i bookings dato un ID, e successivamente eliminare un booking
+    che corrisponda a quell'ID
+'''
+# def get_booking_by_id(booking_id): # With a LEFT OUTER JOIN with the TRAINS table !!!! 
+    # conn = sqlite3.connect('data.db')
+    # cursor = conn.cursor()
+
+    # query = 'SELECT * FROM bookings WHERE id = ?'
+    # cursor.execute(query, (booking_id,))
+    # booking = cursor.fetchone()
+    # conn.close()
+    # return booking
+
+def get_booking_by_id(booking_id):
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+
+    # Potrei migliorare questa query usando gli asterischi per selezionare ogni campo delle tabelle,
+    # comunque questo è proprio l'ordine che vorrei dare alla struttura dati booking che passo di ritorno
+    query = '''
+    SELECT
+        bookings.id,
+        bookings.user_id,
+        bookings.train_id,
+        trains.alphanumeric,
+        bookings.time,
+        bookings.date,
+        bookings.name,
+        bookings.surname,
+        bookings.address,
+        bookings.city,
+        bookings.credit_card,
+        bookings.expire_date_card,
+        bookings.number_of_tickets,
+        bookings.seat,
+        trains.departure,
+        trains.arrival,
+        trains.departure_date,
+        trains.departure_time,
+        trains.arrival_time,
+        trains.train_type,
+        trains.ticket_price
+    FROM bookings
+    LEFT JOIN trains ON bookings.train_id = trains.id
+    WHERE bookings.id = ?
+    '''
+    cursor.execute(query, (booking_id,))
+    booking = cursor.fetchone()
+    conn.close()
+    return booking
+
+def delete_booking(booking_id):
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+
+    query = 'DELETE FROM bookings WHERE id = ?'
+    cursor.execute(query, (booking_id,))
+    conn.commit()
+    conn.close()
+

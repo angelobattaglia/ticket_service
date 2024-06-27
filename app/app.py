@@ -15,14 +15,6 @@ from flask_login import login_user
 import werkzeug.security as ws
 # from forms import LoginForm
 
-# Import the Image module from the PIL (Python Imaging Library) package. 
-# Used to preprocess the images uploaded by the users. 
-# Ensure 'Pillow' is installed before running the application by using
-# the command 'pip install Pillow'
-# from PIL import Image
-# PROFILE_IMG_HEIGHT = 130
-# POST_IMG_WIDTH = 300
-
 # Import the datetime library to handle the pubblication date of the raccolte
 import datetime
 
@@ -56,8 +48,7 @@ login_manager.init_app(app)
 
 @app.route('/')
 def home():
-    
-    return render_template('home.html', title='Home')
+    return render_template('home.html', title='Home', active_page='home')
 
 #########################################################
 #########################################################
@@ -88,7 +79,30 @@ def profile(user_id):
     bookings = bookings_dao.get_bookings_for_user(user_id)
 
     # Passo il treno alla bagina booking_form.html
-    return render_template('profile.html', user=u, bookings=bookings)
+    return render_template('profile.html', user=u, bookings=bookings, active_page='profile')
+
+#########################################################
+#########################################################
+#########################################################
+###### Here I make the method to delete a booking #######
+#########################################################
+#########################################################
+#########################################################
+#########################################################
+
+@app.route('/delete_booking/<int:booking_id>', methods=['POST'])
+@flask_login.login_required
+def delete_booking(booking_id):
+    # Retrieve the booking to ensure it belongs to the current user
+    booking = bookings_dao.get_booking_by_id(booking_id)
+    
+    if booking and booking[0] == flask_login.current_user.id:
+        bookings_dao.delete_booking(booking_id)
+        flash('Booking annulled successfully.', 'success')
+    else:
+        flash('Booking not found or you do not have permission to delete it.', 'danger')
+    
+    return redirect(url_for('profile', user_id=flask_login.current_user.id))
 
 #########################################################
 #########################################################
@@ -160,8 +174,15 @@ def book_ticket():
     number_of_tickets = int(request.form['number_of_tickets'])
     seat = request.form.get('seat')  # Seat is optional
 
+    train = trains_dao.get_train_by_id(train_id)
+    # train[1] # Questo dovrebbe essere il codice alfanumerico :pray:
+    # Faccio un controllo per essere sicuro che questo treno effettivamente esista
+    if not train:
+        flash('Train ID not found', 'error')
+        return redirect(url_for('home'))
+
     # Here you would add the logic to handle the booking, such as saving the booking to a database
-    bookings_dao.insert_booking(user_id, train_id, booking_time, name, surname, address, city, credit_card, expire_date_card, number_of_tickets, seat)
+    bookings_dao.insert_booking(user_id, train_id, train[1], booking_time, name, surname, address, city, credit_card, expire_date_card, number_of_tickets, seat)
 
     flash(f'Ticket for train {train_id} booked successfully!', 'success')
     return redirect(url_for('home'))
@@ -178,7 +199,7 @@ def book_ticket():
 # Define the signup page
 @app.route('/signup')
 def signup():
-    return render_template('signup.html')
+    return render_template('signup.html', active_page='signup')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup_function():
@@ -221,7 +242,7 @@ def load_user(user_id):
 
 @app.route('/login', methods=['GET'])
 def login():
-    return render_template('login.html')
+    return render_template('login.html', active_page='login')
 
 @app.route('/login', methods=['POST'])
 def login_post():
@@ -258,4 +279,4 @@ def logout():
 
 @app.route('/about')
 def about():
-    return render_template('about.html', title='About Us')
+    return render_template('about.html', title='About Us', active_page='about')

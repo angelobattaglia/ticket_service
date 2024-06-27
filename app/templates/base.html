@@ -35,7 +35,7 @@
                             <span class="nav-link disabled">Logged in as {{ current_user.email }}</span>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('profile', user_id=current_user.id) }}">My Bookings</a>
+                            <a class="nav-link {% if active_page == 'profile' %}active{% endif %}" href="{{ url_for('profile', user_id=current_user.id) }}">My Bookings</a>
                         </li>
                     {% else %}
                         <li class="nav-item">
@@ -43,10 +43,10 @@
                         </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                        <a class="nav-link {% if active_page == 'home' %}active{% endif %}" href="{{ url_for('home') }}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('about') }}">About</a>
+                        <a class="nav-link {% if active_page == 'about' %}active{% endif %}" href="{{ url_for('about') }}">About</a>
                     </li>
                     {% if current_user.is_authenticated %}
                         <li class="nav-item">
@@ -54,16 +54,17 @@
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                            <a class="nav-link {% if active_page == 'login' %}active{% endif %}" href="{{ url_for('login') }}">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('signup') }}">Sign Up</a>
+                            <a class="nav-link {% if active_page == 'signup' %}active{% endif %}" href="{{ url_for('signup') }}">Sign Up</a>
                         </li>
                     {% endif %}
                 </ul>
             </div>
         </nav>
     </header>
+
 
     <!-- Adding javascript for animations and components that are not made with CSS  -->
     <!-- This tecnique is called "deferred script loading" or "deferred script placement, and it is tipically placed at the end of the <body> tag -->

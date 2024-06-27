@@ -42,6 +42,7 @@ def create_table_bookings():
             "id" INTEGER PRIMARY KEY AUTOINCREMENT,
             "user_id" INTEGER NOT NULL,
             "train_id" INTEGER NOT NULL,
+            "alphanumeric" TEXT NOT NULL,
 
             -- "time" mi serve per permettere la cancellazione o la modifica di un biglietto, acquistato in precedenza, fino a 2 minuti prima della partenza
             "time" INTEGER NOT NULL,
@@ -61,7 +62,8 @@ def create_table_bookings():
             "seat" INTEGER, -- va da 0 a 30, implementare con un menu drop-down, facoltativo, operativo nel caso in cui sia un treno ad alta velocita'
 
             FOREIGN KEY ("user_id") REFERENCES "users" ("id"),
-            FOREIGN KEY ("train_id") REFERENCES "trains" ("id") -- open question: would it be better to use "alphanumeric" from trains instead? 
+            FOREIGN KEY ("train_id") REFERENCES "trains" ("id"), -- open question: would it be better to use "alphanumeric" from trains instead? 
+            FOREIGN KEY ("alphanumeric") REFERENCES "trains" ("alphanumeric")
         );
     ''')
     conn.commit()
