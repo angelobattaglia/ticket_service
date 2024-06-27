@@ -61,6 +61,7 @@ def home():
 
 # Per convertire il tempo nella visualizzazione
 def minutes_to_time(minutes):
+    minutes = int(minutes)  # Convert string to integer
     hours = minutes // 60
     mins = minutes % 60
     return f"{hours:02}:{mins:02}"
@@ -177,12 +178,20 @@ def search_trains():
 
     # Search for trains
     results = trains_dao.search_trains(departure_city, arrival_city, departure_date)
-
     if not results:
         flash('No trains available for the selected route and date.', 'info')
-    
+
+    formatted_results = []
+    for train in results:
+        train = list(train)
+        train_departure_time_index = 5
+        train[train_departure_time_index] = minutes_to_time(train[train_departure_time_index])
+        train_arrival_time_index = 6
+        train[train_arrival_time_index] = minutes_to_time(train[train_arrival_time_index])
+        formatted_results.append(train)
+
     min_date = datetime.datetime.now().strftime('%Y-%m-%d')
-    return render_template('home.html', title='Search Results', departure_city=departure_city, arrival_city=arrival_city, departure_date=departure_date ,min_date=min_date, trains=results, search=True)
+    return render_template('home.html', title='Search Results', departure_city=departure_city, arrival_city=arrival_city, departure_date=departure_date, min_date=min_date, trains=formatted_results, search=True)
 
 # Booking form with dynamic routing
 @app.route('/booking_form/<int:train_id>', methods=['GET'])
