@@ -131,11 +131,13 @@ def delete_booking(booking_id):
     conn.commit()
     conn.close()
 
-#def modify_booking(booking_id):
-    #conn = sqlite3.connect('data.db')
-    #cursor = conn.cursor()
-
-    #query = 'DELETE FROM bookings WHERE id = ?'
-    #cursor.execute(query, (booking_id,))
-    #conn.commit()
-    #conn.close()
+def modify_booking(booking_id, new_train_id):
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        UPDATE bookings
+        SET train_id = ?
+        WHERE id = ?
+    ''', (new_train_id, booking_id))
+    conn.commit()
+    conn.close()
