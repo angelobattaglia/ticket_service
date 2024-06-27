@@ -21,5 +21,4 @@ class User(UserMixin):
     def __init__(self, id, email, password):
         self.id = id
         self.email = email
-        # self.usr_type = usr_type # if your app has to model multiple types of users, add also to the constructor above
         self.password = password

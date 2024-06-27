@@ -19,9 +19,9 @@ import werkzeug.security as ws
 # Used to preprocess the images uploaded by the users. 
 # Ensure 'Pillow' is installed before running the application by using
 # the command 'pip install Pillow'
-from PIL import Image
-PROFILE_IMG_HEIGHT = 130
-POST_IMG_WIDTH = 300
+# from PIL import Image
+# PROFILE_IMG_HEIGHT = 130
+# POST_IMG_WIDTH = 300
 
 # Import the datetime library to handle the pubblication date of the raccolte
 import datetime
@@ -29,11 +29,14 @@ import datetime
 ## Import the dao modules and the models module
 import models
 import utenti_dao
+import trains_dao
+import bookings_dao
 
 ## Here I call these functions for the creation of the DB tables at startup time
-from table_creation import create_table_users, create_table_trains
+from table_creation import create_table_users, create_table_trains, create_table_bookings
 create_table_users()
 create_table_trains()
+create_table_bookings()
 
 ## Calling the method to populate the DB
 from populate import populate, populate_solutions
@@ -58,15 +61,79 @@ def home():
 #########################################################
 #########################################################
 #########################################################
-#######Now I make the other requests       ##############
+########## I make the booking and search system #########
 #########################################################
 #########################################################
 #########################################################
 #########################################################
 
+@app.route('/search_trains', methods=['POST'])
+def search_trains():
+    departure_city = request.form['departure_city']
+    arrival_city = request.form['arrival_city']
+    departure_date = request.form['departure_date']
 
+    # Validate the form inputs
+    if departure_city == arrival_city:
+        flash('Departure city and arrival city cannot be the same.', 'danger')
+        return redirect(url_for('home'))
+    if datetime.datetime.strptime(departure_date, '%Y-%m-%d') < datetime.datetime.now():
+        flash('Departure date cannot be in the past.', 'danger')
+        return redirect(url_for('home'))
 
+    # Search for trains
+    results = trains_dao.search_trains(departure_city, arrival_city, departure_date)
 
+    if not results:
+        flash('No trains available for the selected route and date.', 'info')
+    
+    min_date = datetime.datetime.now().strftime('%Y-%m-%d')
+    return render_template('home.html', title='Search Results', departure_city=departure_city, arrival_city=arrival_city, departure_date=departure_date ,min_date=min_date, trains=results)
+
+# Booking form with dynamic routing
+@app.route('/booking_form/<int:train_id>', methods=['GET'])
+@flask_login.login_required
+def booking_form(train_id):
+    # Find the train by its ID
+    train = None
+    for t in trains_dao.get_trains():
+        if t[0] == train_id:
+            train = t
+            break
+
+    # Controllo che il treno sia stato trovato, in caso negativo faccio un redirect alla home
+    if not train:
+        flash('Train not found', 'danger')
+        return redirect(url_for('home'))
+
+    # is_high_speed è un dato booleano, che deriva proprio dal controllo logico che viene fatto a sinistra
+    is_high_speed = train[8] == "High-speed"
+
+    # Passo il treno alla bagina booking_form.html
+    return render_template('booking_form.html', train_id=train_id, is_high_speed=is_high_speed)
+
+@app.route('/book_ticket', methods=['POST'])
+def book_ticket():
+    # Prendo il tempo corrente
+    booking_time = datetime.datetime.now()
+
+    train_id = request.form['train_id']
+    # Here you would add the logic to handle the booking, such as saving the booking to a database
+    train_id = request.form['train_id']
+    user_id = flask_login.current_user.id
+    name = request.form['name']
+    surname = request.form['surname']
+    address = request.form['address']
+    city = request.form['city']
+    credit_card = request.form['credit_card']
+    expire_date_card = request.form['expire_date_card']
+    number_of_tickets = int(request.form['number_of_tickets'])
+    seat = request.form.get('seat')  # Seat is optional
+
+    bookings_dao.insert_booking(user_id, train_id, booking_time, name, surname, address, city, credit_card, expire_date_card, number_of_tickets, seat)
+
+    flash(f'Ticket for train {train_id} booked successfully!', 'success')
+    return redirect(url_for('home'))
 
 
 

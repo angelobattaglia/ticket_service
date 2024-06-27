@@ -1,8 +1,74 @@
 {% extends 'base.html' %}
 
-<!--The placeholder {{ title }} then gets replaced by the title from render_template in the definition of the route-->
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-
+<div class="container my-4">
+    <h3 class="mb-3">Search for Available Trains</h3>
+    <form method="POST" action="/search_trains">
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <label for="departureCity" class="form-label">Departure City</label>
+                <input type="text" class="form-control" id="departureCity" name="departure_city" required>
+            </div>
+            <div class="col-md-6">
+                <label for="arrivalCity" class="form-label">Arrival City</label>
+                <input type="text" class="form-control" id="arrivalCity" name="arrival_city" required>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="departureDate" class="form-label">Departure Date</label>
+                <input type="date" class="form-control" id="departureDate" name="departure_date" required min="{{ min_date }}">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Search</button>
+    </form>
+    <hr>
+    {% if trains %}
+    <h2>Search Results</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Train Code</th>
+                <th>Departure City</th>
+                <th>Arrival City</th>
+                <th>Departure Date</th>
+                <th>Departure Time</th>
+                <th>Arrival Time</th>
+                <th>Days of Operation</th>
+                <th>Train Type</th>
+                <th>Ticket Price</th>
+                {% if current_user.is_authenticated %}
+                <th>Action</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for train in trains %}
+            <tr>
+                <td>{{ train[1] }}</td>
+                <td>{{ train[3] }}</td>
+                <td>{{ train[4] }}</td>
+                <td>{{ train[2] }}</td>
+                <td>{{ train[5] }}</td>
+                <td>{{ train[6] }}</td>
+                <td>{{ train[7] }}</td>
+                <td>{{ train[8] }}</td>
+                <td>{{ train[9] }}</td>
+                {% if current_user.is_authenticated %}
+                <td>
+                    <form method="GET" action="{{ url_for('booking_form', train_id=train[0]) }}">
+                        <button type="submit" class="btn btn-success btn-sm">Book</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No trains available for the route from {{ departure_city }} to {{ arrival_city }} on {{ departure_date }}.</p>
+    {% endif %}
+</div>
 {% endblock %}
