@@ -54,6 +54,29 @@ def populate():
 
     print("Data inserted successfully into the trains table.")
 
+def populate_train_capacity():
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+
+    train_capacity_data = [
+        ("Regular", 20),
+        ("High-speed", 30)
+    ]
+
+    insert_query = '''
+    INSERT INTO train_capacity (train_type, capacity)
+    VALUES (?, ?)
+    '''
+
+    try:
+        cursor.executemany(insert_query, train_capacity_data)
+        conn.commit()
+        print("Data inserted successfully into the train_capacity table.")
+    except sqlite3.IntegrityError as e:
+        print(f"IntegrityError: {e}")
+    finally:
+        conn.close()
+
 
 # def populate_solutions():
 
