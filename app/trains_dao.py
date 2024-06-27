@@ -21,18 +21,18 @@ def search_trains(departure_city, arrival_city, departure_date):
     conn.close()
     return results
 
-def get_train_by_id(train_id):
-    conn = sqlite3.connect('data.db')
-    cursor = conn.cursor()
-
-    # Query parametrizzata (per prevenire SQL injections) e passo i parametri train_id come una tupla (quindi metto una virgola dopo)
-    query = '''
-    SELECT * FROM trains
-    WHERE alphanumeric = ?
-    '''
-    cursor.execute(query, (train_id,))
-    train = cursor.fetchall()
-    conn.close()
+def get_train_by_id(train_id): 
+    conn = sqlite3.connect('data.db') 
+    cursor = conn.cursor() 
+ 
+    # Query parametrizzata (per prevenire SQL injections) e passo i parametri train_id come una tupla (quindi metto una virgola dopo) 
+    query = ''' 
+    SELECT * FROM trains 
+    WHERE id = ? 
+    ''' 
+    cursor.execute(query, (train_id,)) 
+    train = cursor.fetchone() 
+    conn.close() 
     return train
 
 def get_trains():

@@ -104,6 +104,20 @@ def delete_booking(booking_id):
     
     return redirect(url_for('profile', user_id=flask_login.current_user.id))
 
+#@app.route('/modify_booking/<int:booking_id>', methods=['POST'])
+#@flask_login.login_required
+#def delete_booking(booking_id):
+    ## Retrieve the booking to ensure it belongs to the current user
+    #booking = bookings_dao.get_booking_by_id(booking_id)
+    
+    #if booking and booking[0] == flask_login.current_user.id:
+        #bookings_dao.modify_booking(booking_id)
+        #flash('Booking annulled successfully.', 'success')
+    #else:
+        #flash('Booking not found or you do not have permission to delete it.', 'danger')
+    
+    #return redirect(url_for('profile', user_id=flask_login.current_user.id))
+
 #########################################################
 #########################################################
 #########################################################
@@ -113,6 +127,7 @@ def delete_booking(booking_id):
 #########################################################
 #########################################################
 
+# mostra i posti disponibili, se il treno è pieno non si può prenotare
 @app.route('/search_trains', methods=['POST'])
 def search_trains():
     departure_city = request.form['departure_city']
