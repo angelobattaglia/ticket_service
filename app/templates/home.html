@@ -59,7 +59,7 @@
                     <td>{{ train[8] }}</td>
                     <td>{{ train[9] }}</td>
                     <td>{{ train[11] ~ "/" ~ train[10] }}</td>
-                    {% if current_user.is_authenticated %}
+                    {% if current_user.is_authenticated and train[11] > 0 %}
                     <td>
                         <form method="GET" action="{{ url_for('booking_form', train_id=train[0]) }}">
                             <button type="submit" class="btn btn-success btn-sm">Book</button>
