@@ -77,9 +77,6 @@ def profile(user_id):
 
     # Faccio il "retrieve" di tutti i bookings che appartengono al determinato utente
     bookings = bookings_dao.get_bookings_for_user(user_id)
-    # # Prendo il treno in questione, in modo tale da passarlo a profile.html e visualizzare le informazioni
-    # # relative alla tratta
-    # train = trains_dao.get_train_by_alphanumeric(bookings[3])
 
     # Passo il treno alla bagina booking_form.html
     return render_template('profile.html', user=u, bookings=bookings, active_page='profile')

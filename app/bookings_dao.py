@@ -24,13 +24,51 @@ def get_bookings_for_user(user_id):
 
     # Query parametrizzata (per prevenire SQL injections) e passo i parametri train_id come una tupla (quindi metto una virgola dopo)
     query = '''
-    SELECT * FROM bookings
+    SELECT
+        bookings.id, -- [0]
+        bookings.user_id, -- [1]
+        bookings.train_id,
+        trains.alphanumeric,
+        bookings.time,
+        bookings.date,
+        bookings.name,
+        bookings.surname,
+        bookings.address,
+        bookings.city,
+        bookings.credit_card,
+        bookings.expire_date_card,
+        bookings.number_of_tickets,
+        bookings.seat,
+        trains.departure,
+        trains.arrival,
+        trains.departure_date,
+        trains.departure_time,
+        trains.arrival_time,
+        trains.train_type,
+        trains.ticket_price
+    FROM bookings
+    LEFT JOIN trains ON bookings.train_id = trains.id
     WHERE user_id = ?
     '''
     cursor.execute(query, (user_id,))
     train = cursor.fetchall()
     conn.close()
     return train
+
+def count_seats_for_train(train_id):
+    conn = sqlite3.connect('data.db')
+    cursor = conn.cursor()
+
+    # Query parametrizzata (per prevenire SQL injections) e passo i parametri train_id come una tupla (quindi metto una virgola dopo)
+    query = '''
+    SELECT SUM(number_of_tickets)
+    FROM bookings
+    WHERE train_id = ?
+    '''
+    cursor.execute(query, (train_id,))
+    tickets = cursor.fetchone()
+    conn.close()
+    return tickets[0]
 
 '''
     I due metodi seguenti servono per prendere dal db i bookings dato un ID, e successivamente eliminare un booking
