@@ -118,8 +118,6 @@ def book_ticket():
     booking_time = datetime.datetime.now()
 
     train_id = request.form['train_id']
-    # Here you would add the logic to handle the booking, such as saving the booking to a database
-    train_id = request.form['train_id']
     user_id = flask_login.current_user.id
     name = request.form['name']
     surname = request.form['surname']
@@ -130,12 +128,11 @@ def book_ticket():
     number_of_tickets = int(request.form['number_of_tickets'])
     seat = request.form.get('seat')  # Seat is optional
 
+    # Here you would add the logic to handle the booking, such as saving the booking to a database
     bookings_dao.insert_booking(user_id, train_id, booking_time, name, surname, address, city, credit_card, expire_date_card, number_of_tickets, seat)
 
     flash(f'Ticket for train {train_id} booked successfully!', 'success')
     return redirect(url_for('home'))
-
-
 
 #########################################################
 #########################################################
