@@ -9,7 +9,8 @@ def search_trains(departure_city, arrival_city, departure_date):
     day_of_week = datetime.datetime.strptime(departure_date, '%Y-%m-%d').strftime('%A')
     
     query = '''
-        SELECT * FROM trains
+        SELECT trains.*,train_capacity.capacity, train_capacity.capacity - ifnull((select SUM(number_of_tickets) FROM bookings WHERE train_id = trains.id),0) as booked FROM trains
+        LEFT JOIN train_capacity ON trains.train_type = train_capacity.train_type
         WHERE departure = ?
         AND arrival = ?
         AND departure_date = ?
